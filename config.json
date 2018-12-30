@@ -1,0 +1,9 @@
+{
+  "daemon": {
+    "host": "localhost",
+    "port": 11898
+  },
+  "queues": {
+    "relayAgent": "send.transaction"
+  }
+}

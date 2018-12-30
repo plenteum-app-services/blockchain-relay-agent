@@ -1,0 +1,29 @@
+{
+  "name": "turtlepay-bra",
+  "version": "0.0.1",
+  "description": "TurtlePay: Blockchain Relay Agent",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TurtlePay/blockchain-relay-agent.git"
+  },
+  "keywords": [
+    "TurtlePay"
+  ],
+  "author": "TurtlePay Development Team",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TurtlePay/blockchain-relay-agent/issues"
+  },
+  "homepage": "https://github.com/TurtlePay/blockchain-relay-agent#readme",
+  "dependencies": {
+    "amqplib": "^0.5.3",
+    "turtlecoin-rpc": "^0.8.8"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
+}
