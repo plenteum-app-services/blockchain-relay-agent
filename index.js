@@ -63,6 +63,8 @@ if (cluster.isMaster) {
         durable: true
       })
 
+      publicChannel.prefetch(1)
+
       /* Looks like we received a request */
       publicChannel.consume(Config.queues.relayAgent, async function (message) {
         if (message !== null) {
