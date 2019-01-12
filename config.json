@@ -4,6 +4,6 @@
     "port": 11898
   },
   "queues": {
-    "relayAgent": "bra.request"
+    "relayAgent": "request.network"
   }
 }
