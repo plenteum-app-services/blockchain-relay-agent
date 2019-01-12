@@ -133,10 +133,10 @@ if (cluster.isMaster) {
               log(util.format('[INFO] Worker #%s failed retrive blocktemplate for [%s] via %s:%s', cluster.worker.id, payload.walletAddress, Config.daemon.host, Config.daemon.port))
               return publicChannel.nack(message)
             })
+          } else {
+            /* We don't know how to handle this */
+            return publicChannel.nack(message)
           }
-
-          /* We don't know how to handle this */
-          return publicChannel.nack(message)
         }
       })
     } catch (e) {
