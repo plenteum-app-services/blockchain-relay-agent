@@ -86,11 +86,19 @@ if (cluster.isMaster) {
               /* We got a response to the request, we're done here */
               log(util.format('[INFO] Worker #%s sent transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
               return publicChannel.ack(message)
-            }).catch(() => {
-              /* An error occurred, we're going to have to leave
-               this request for someone else to handle */
+            }).catch((error) => {
+              /* An error occurred */
               log(util.format('[INFO] Worker #%s failed to send transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
-              return publicChannel.nack(message)
+
+              const reply = {
+                error: error.toString()
+              }
+
+              publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(reply)), {
+                correlationId: message.properties.correlationId
+              })
+
+              return publicChannel.ack(message)
             })
           } else if (payload.blockBlob) {
             /* Attempt to send the block to the requested daemon */
@@ -106,11 +114,19 @@ if (cluster.isMaster) {
               /* We got a response to the request, we're done here */
               log(util.format('[INFO] Worker #%s submitted block [%s] via %s:%s', cluster.worker.id, payload.blockBlob, Config.daemon.host, Config.daemon.port))
               return publicChannel.ack(message)
-            }).catch(() => {
-              /* An error occurred, we're going to have to leave
-               this request for someone else to handle */
+            }).catch((error) => {
+              /* An error occurred */
               log(util.format('[INFO] Worker #%s failed to submit block [%s] via %s:%s', cluster.worker.id, payload.blockBlob, Config.daemon.host, Config.daemon.port))
-              return publicChannel.nack(message)
+
+              const reply = {
+                error: error.toString()
+              }
+
+              publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(reply)), {
+                correlationId: message.properties.correlationId
+              })
+
+              return publicChannel.ack(message)
             })
           } else if (payload.walletAddress && payload.reserveSize) {
             /* Attempt to get the block template from the requested daemon */
@@ -127,11 +143,19 @@ if (cluster.isMaster) {
               /* We got a response to the request, we're done here */
               log(util.format('[INFO] Worker #%s received blocktemplate for [%s] via %s:%s', cluster.worker.id, payload.walletAddress, Config.daemon.host, Config.daemon.port))
               return publicChannel.ack(message)
-            }).catch(() => {
-              /* An error occurred, we're going to have to leave
-               this request for someone else to handle */
-              log(util.format('[INFO] Worker #%s failed retrive blocktemplate for [%s] via %s:%s', cluster.worker.id, payload.walletAddress, Config.daemon.host, Config.daemon.port))
-              return publicChannel.nack(message)
+            }).catch((error) => {
+              /* An error occurred */
+              log(util.format('[INFO] Worker #%s failed retrieve blocktemplate for [%s] via %s:%s', cluster.worker.id, payload.walletAddress, Config.daemon.host, Config.daemon.port))
+
+              const reply = {
+                error: error.toString()
+              }
+
+              publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(reply)), {
+                correlationId: message.properties.correlationId
+              })
+
+              return publicChannel.ack(message)
             })
           } else {
             /* We don't know how to handle this */
