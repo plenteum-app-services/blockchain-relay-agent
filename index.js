@@ -8,7 +8,7 @@ const Config = require('./config.json')
 const RabbitMQ = require('amqplib')
 const cluster = require('cluster')
 const util = require('util')
-const cpuCount = Math.ceil(require('os').cpus().length / 3)
+const cpuCount = Math.ceil(require('os').cpus().length / 8)
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind
 const daemon = new TurtleCoind({
   host: Config.daemon.host,
@@ -72,25 +72,71 @@ if (cluster.isMaster) {
           /* Parse the incoming message */
           const payload = JSON.parse(message.content.toString())
 
-          /* Attempt to send the transaction to the requested daemon */
-          daemon.sendRawTransaction({
-            tx: payload.rawTransaction
-          }).then((response) => {
-            /* Send the daemon's response back to the worker that requested
+          if (payload.rawTransaction) {
+            /* Attempt to send the transaction to the requested daemon */
+            daemon.sendRawTransaction({
+              tx: payload.rawTransaction
+            }).then((response) => {
+              /* Send the daemon's response back to the worker that requested
                we do the work for them */
-            publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(response)), {
-              correlationId: message.properties.correlationId
-            })
+              publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(response)), {
+                correlationId: message.properties.correlationId
+              })
 
-            /* We got a response to the request, we're done here */
-            log(util.format('[INFO] Worker #%s sent transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
-            return publicChannel.ack(message)
-          }).catch(() => {
-            /* An error occurred, we're going to have to leave
+              /* We got a response to the request, we're done here */
+              log(util.format('[INFO] Worker #%s sent transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
+              return publicChannel.ack(message)
+            }).catch(() => {
+              /* An error occurred, we're going to have to leave
                this request for someone else to handle */
-            log(util.format('[INFO] Worker #%s failed to send transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
-            return publicChannel.nack(message)
-          })
+              log(util.format('[INFO] Worker #%s failed to send transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
+              return publicChannel.nack(message)
+            })
+          } else if (payload.blockBlob) {
+            /* Attempt to send the block to the requested daemon */
+            daemon.submitBlock({
+              blockBlob: payload.blockBlob
+            }).then((response) => {
+              /* Send the daemon's response back to the worker that requested
+               we do the work for them */
+              publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(response)), {
+                correlationId: message.properties.correlationId
+              })
+
+              /* We got a response to the request, we're done here */
+              log(util.format('[INFO] Worker #%s submitted block [%s] via %s:%s', cluster.worker.id, payload.blockBlob, Config.daemon.host, Config.daemon.port))
+              return publicChannel.ack(message)
+            }).catch(() => {
+              /* An error occurred, we're going to have to leave
+               this request for someone else to handle */
+              log(util.format('[INFO] Worker #%s failed to submit block [%s] via %s:%s', cluster.worker.id, payload.blockBlob, Config.daemon.host, Config.daemon.port))
+              return publicChannel.nack(message)
+            })
+          } else if (payload.walletAddress && payload.reserveSize) {
+            /* Attempt to get the block template from the requested daemon */
+            daemon.getBlockTemplate({
+              walletAddress: payload.walletAddress,
+              reserveSize: payload.reserveSize
+            }).then((response) => {
+              /* Send the daemon's response back to the worker that requested
+               we do the work for them */
+              publicChannel.sendToQueue(message.properties.replyTo, Buffer.from(JSON.stringify(response)), {
+                correlationId: message.properties.correlationId
+              })
+
+              /* We got a response to the request, we're done here */
+              log(util.format('[INFO] Worker #%s received blocktemplate for [%s] via %s:%s', cluster.worker.id, payload.walletAddress, Config.daemon.host, Config.daemon.port))
+              return publicChannel.ack(message)
+            }).catch(() => {
+              /* An error occurred, we're going to have to leave
+               this request for someone else to handle */
+              log(util.format('[INFO] Worker #%s failed retrive blocktemplate for [%s] via %s:%s', cluster.worker.id, payload.walletAddress, Config.daemon.host, Config.daemon.port))
+              return publicChannel.nack(message)
+            })
+          }
+
+          /* We don't know how to handle this */
+          return publicChannel.nack(message)
         }
       })
     } catch (e) {
