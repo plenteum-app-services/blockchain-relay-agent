@@ -5,11 +5,12 @@
 'use strict'
 
 const Config = require('./config.json')
-const RabbitMQ = require('amqplib')
 const cluster = require('cluster')
-const util = require('util')
 const cpuCount = Math.ceil(require('os').cpus().length / 8)
+const RabbitMQ = require('amqplib')
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind
+const util = require('util')
+
 const daemon = new TurtleCoind({
   host: Config.daemon.host,
   port: Config.daemon.port
