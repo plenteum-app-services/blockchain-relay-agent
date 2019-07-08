@@ -16,6 +16,10 @@
   ],
   "author": "TurtlePay Development Team",
   "license": "AGPL-3.0",
+  "engines": {
+    "node": ">=6"
+  },
+  "engineStrict": true,
   "bugs": {
     "url": "https://github.com/TurtlePay/blockchain-relay-agent/issues"
   },

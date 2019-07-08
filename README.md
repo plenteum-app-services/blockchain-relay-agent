@@ -1,33 +1,22 @@
 # TurtlePay™: Blockchain Relay Agent
+![Version](https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000) ![Prerequisite](https://img.shields.io/badge/node-%3E%3D6-blue.svg) [![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/TurtlePay/blockchain-relay-agent#readme) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/TurtlePay/blockchain-relay-agent/graphs/commit-activity) [![License: AGPL-3.0](https://img.shields.io/badge/license-AGL--3.0-yellow.svg)](https://github.com/TurtlePay/blockchain-relay-agent/blob/master/LICENSE) [![Twitter: TurtlePay](https://img.shields.io/twitter/follow/TurtlePay.svg?style=social)](https://twitter.com/TurtlePay)
 
-This repository contains the worker that relays new transactions from the TurtlePay™ platform to the TurtleCoin blockchain.
-
-It is also used by the [TurtlePay™ Blockchain Cache API](https://github.com/TurtlePay/blockchain-cache-api) to relay transactions, submit blocks, and request blocktemplates from the network.
+> RabbitMQ agent that relays information to/from TurtleCoind to interact with the TurtleCoin™ network.
 
 ## Prerequisites
 
-* [RabbitMQ](https://www.rabbitmq.com/)
-* [Node.js](https://nodejs.org/) LTS
+- node >=6
+- RabbitMQ >= 3.7.9
 
-## Foreword
+## Install
 
-We know that this documentation needs cleaned up and made easier to read. We'll compile it as part of the full documentation as the project moves forward.
-
-## Setup
-
-1) Clone this repository to wherever you'd like the API to run:
-
-```bash
-git clone https://github.com/TurtlePay/blockchain-relay-agent
+```sh
+npm install
 ```
 
-2) Install the required Node.js modules
+## Usage
 
-```bash
-cd blockchain-relay-agent && npm install
-```
-
-3) Use your favorite text editor to change the values as necessary in `config.json`
+1) Use your favorite text editor to change the values as necessary in `config.json`
 
 ```javascript
 {
@@ -41,22 +30,44 @@ cd blockchain-relay-agent && npm install
 }
 ```
 
-4) Fire up the script
+2) Set your environment variables and start the service up
 
-```bash
+```sh
 export RABBIT_PUBLIC_SERVER=localhost
 export RABBIT_PUBLIC_USERNAME=yourrabbitmqusername
 export RABBIT_PUBLIC_PASSWORD=yourrabbitmqpassword
-node index.js
+npm start
 ```
 
-5) Optionally, install PM2 or another process manager to keep the service running.
+## Run tests
 
-```bash
-npm install -g pm2@latest
-pm2 startup
-pm2 start index.js --name blockchain-relay-agent -i max
-pm2 save
+```sh
+npm test
 ```
 
-###### (c) 2018-2019 TurtlePay™ Development Team
+## Author
+
+👤 **TurtlePay™ Development Team**
+
+* Twitter: [@TurtlePay](https://twitter.com/TurtlePay)
+* Github: [@TurtlePay](https://github.com/TurtlePay)
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!
+
+Feel free to check [issues page](https://github.com/TurtlePay/blockchain-relay-agent/issues).
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+
+## 📝 License
+
+Copyright © 2018-2019 [TurtlePay™ Development Team](https://github.com/TurtlePay).
+
+This project is [AGPL-3.0](https://github.com/TurtlePay/blockchain-relay-agent/blob/master/LICENSE) licensed.
+
+***
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
