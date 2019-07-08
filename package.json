@@ -1,6 +1,6 @@
 {
   "name": "turtlepay-bra",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TurtlePay: Blockchain Relay Agent",
   "main": "index.js",
   "scripts": {
