@@ -4,6 +4,7 @@
 
 'use strict'
 
+require('dotenv').config()
 const Config = require('./config.json')
 const cluster = require('cluster')
 const cpuCount = Math.ceil(require('os').cpus().length / 8)
