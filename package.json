@@ -26,7 +26,7 @@
   "homepage": "https://github.com/TurtlePay/blockchain-relay-agent#readme",
   "dependencies": {
     "amqplib": "^0.5.3",
-    "turtlecoin-rpc": "^1.0.0"
+    "turtlecoin-rpc": "^1.0.1"
   },
   "devDependencies": {
     "standard": "^13.0.1"
