@@ -5,8 +5,9 @@
 'use strict'
 
 require('dotenv').config()
-const Config = require('./config.json')
 const cluster = require('cluster')
+require('colors')
+const Config = require('./config.json')
 const cpuCount = Math.ceil(require('os').cpus().length / 8)
 const RabbitMQ = require('amqplib')
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind
@@ -93,11 +94,15 @@ if (cluster.isMaster) {
               })
 
               /* We got a response to the request, we're done here */
-              log(util.format('[INFO] Worker #%s sent transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
+              if (response.status.toUpperCase() === 'OK') {
+                log(util.format('[INFO] Worker #%s relayed transaction [%s] via %s:%s [%s]', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port, response.status).green)
+              } else {
+                log(util.format('[INFO] Worker #%s relayed transaction [%s] via %s:%s [%s]', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port, response.status).red)
+              }
               return publicChannel.ack(message)
             }).catch((error) => {
               /* An error occurred */
-              log(util.format('[INFO] Worker #%s failed to send transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
+              log(util.format('[INFO] Worker #%s failed to relay transaction [%s] via %s:%s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port))
 
               const reply = {
                 error: error.toString()
