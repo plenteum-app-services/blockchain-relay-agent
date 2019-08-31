@@ -1,4 +1,5 @@
 // Copyright (c) 2018-2019, TurtlePay Developers
+// Copyright (c) 2018-2019, Plenteum Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -10,10 +11,10 @@ require('colors')
 const Config = require('./config.json')
 const cpuCount = Math.ceil(require('os').cpus().length / 8)
 const RabbitMQ = require('amqplib')
-const TurtleCoind = require('turtlecoin-rpc').TurtleCoind
+const Plenteumd = require('plenteum-rpc').Plenteumd
 const util = require('util')
 
-const daemon = new TurtleCoind({
+const daemon = new Plenteumd({
   host: Config.daemon.host,
   port: Config.daemon.port
 })
@@ -46,7 +47,7 @@ function buildConnectionString (host, username, password) {
 }
 
 if (cluster.isMaster) {
-  console.log('Starting TurtlePay Blockchain Relay Agent...')
+  console.log('Starting Plenteum App Services Blockchain Relay Agent...')
 
   for (var cpuThread = 0; cpuThread < cpuCount; cpuThread++) {
     spawnNewWorker()
