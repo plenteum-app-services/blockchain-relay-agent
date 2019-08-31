@@ -97,7 +97,7 @@ if (cluster.isMaster) {
               if (response.status.toUpperCase() === 'OK') {
                 log(util.format('[INFO] Worker #%s relayed transaction [%s] via %s:%s [%s]', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port, response.status).green)
               } else {
-                log(util.format('[INFO] Worker #%s relayed transaction [%s] via %s:%s [%s]', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port, response.status).red)
+                log(util.format('[INFO] Worker #%s relayed transaction [%s] via %s:%s [%s] %s', cluster.worker.id, payload.hash, Config.daemon.host, Config.daemon.port, response.status, response.error || '').red)
               }
               return publicChannel.ack(message)
             }).catch((error) => {
